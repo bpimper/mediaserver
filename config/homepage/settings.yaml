@@ -1,0 +1,14 @@
+---
+theme: dark
+color: slate
+headerStyle: boxed
+layout:
+  Core:
+    style: column
+    header: false
+  Media:
+    style: column
+    header: false
+target: _blank
+hideVersion: true
+title: home

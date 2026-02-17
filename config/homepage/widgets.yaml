@@ -1,0 +1,23 @@
+- resources:
+    cpu: true
+    memory: true
+    cputemp: true
+    tempmin: 25
+    tempmax: 90
+    disk: /
+    units: {{HOMEPAGE_VAR_UNITS}}
+    refresh: 3000
+
+- openmeteo:
+    label: {{HOMEPAGE_VAR_WEATHER_LABEL}}
+    latitude: {{HOMEPAGE_VAR_WEATHER_LATITUDE}}
+    longitude: {{HOMEPAGE_VAR_WEATHER_LONGITUDE}}
+    units: {{HOMEPAGE_VAR_UNITS}}
+    cache: 5
+
+- datetime:
+    text_size: l
+    locale: {{HOMEPAGE_VAR_LOCALE}}
+    format:
+        dateStyle: short
+        timeStyle: short

@@ -1,0 +1,341 @@
+body {
+background-color: #161616 !important;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Ccircle cx='7' cy='7' r='0.7' fill='rgba(255,255,255,0.11)'/%3E%3C/svg%3E") !important;
+background-repeat: repeat !important;
+background-attachment: fixed !important;
+background-size: 14px 14px !important;
+min-height: 100vh;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+*:focus {
+outline: none !important;
+}
+
+#__next,
+#__next > div,
+#__next > div > div,
+#page_container,
+div[id="page_container"],
+main,
+#inner_wrapper,
+#page_wrapper {
+background: transparent !important;
+background-color: transparent !important;
+}
+
+:is(.dark .dark\:bg-neutral-900),
+:is(.dark .dark\:bg-neutral-800),
+:is(.dark .dark\:bg-gray-900),
+:is(.dark .dark\:bg-gray-800),
+:is(.dark .dark\:bg-slate-900),
+:is(.dark .dark\:bg-slate-800),
+:is(.dark .dark\:bg-zinc-900),
+:is(.dark .dark\:bg-zinc-800),
+:is(.dark .dark\:bg-stone-900),
+:is(.dark .dark\:bg-stone-800) {
+background-color: transparent !important;
+}
+
+.bg-theme-100, .bg-theme-200, .bg-theme-300,
+.bg-theme-600, .bg-theme-700, .bg-theme-800, .bg-theme-900,
+.color-theme-light, .color-theme-dark {
+background-color: transparent !important;
+}
+
+body > div,
+body > div > div,
+body > div > div > div,
+body > div > div > div > div {
+background-color: transparent !important;
+background-image: none !important;
+}
+
+.service > div,
+.service a,
+.service-card,
+.bookmark,
+.bookmark a,
+.widget {
+background: transparent !important;
+box-shadow: none !important;
+}
+
+.information-widget-resource,
+.information-widget-weather {
+background: transparent !important;
+box-shadow: none !important;
+}
+
+.information-widgets {
+background: rgba(18, 18, 18, 0.85) !important;
+backdrop-filter: blur(14px) !important;
+-webkit-backdrop-filter: blur(14px) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 14px !important;
+padding: 10px 20px !important;
+margin-bottom: 20px !important;
+gap: 8px !important;
+box-shadow: none !important;
+}
+
+:is(.dark .dark\:bg-white\/5):has(.information-widget-resource),
+:is(.dark .dark\:bg-white\/5):has(.information-widget-weather) {
+background: rgba(18, 18, 18, 0.85) !important;
+backdrop-filter: blur(14px) !important;
+-webkit-backdrop-filter: blur(14px) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 14px !important;
+padding: 10px 20px !important;
+box-shadow: none !important;
+}
+
+.information-widget-datetime {
+border-radius: 14px !important;
+padding: 10px 20px !important;
+color: rgba(255, 255, 255, 0.85) !important;
+font-size: 1rem !important;
+font-weight: 500 !important;
+}
+
+:is(.dark .dark\:bg-white\/5) > .information-widget-datetime,
+.information-widgets > .information-widget-datetime {
+border: none !important;
+padding: 6px 10px !important;
+}
+
+:is(.dark .dark\:bg-white\/5):has(.information-widget-datetime) {
+background: rgba(18, 18, 18, 0.85) !important;
+backdrop-filter: blur(14px) !important;
+-webkit-backdrop-filter: blur(14px) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 14px !important;
+padding: 10px 20px !important;
+box-shadow: none !important;
+}
+
+.information-widget-resource span,
+.information-widget-weather span {
+color: rgba(255, 255, 255, 0.6) !important;
+white-space: nowrap !important;
+}
+
+.information-widget-datetime span {
+color: rgba(255, 255, 255, 0.85) !important;
+white-space: nowrap !important;
+}
+
+.information-widget-weather {
+color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.services-group {
+background: rgba(18, 18, 18, 0.8) !important;
+backdrop-filter: blur(12px) !important;
+-webkit-backdrop-filter: blur(12px) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 16px !important;
+padding: 16px 16px 10px 16px !important;
+margin-bottom: 20px !important;
+}
+
+.services-group h2 {
+color: rgba(255, 255, 255, 0.85) !important;
+font-weight: 600 !important;
+font-size: 1.05rem !important;
+letter-spacing: 0.01em !important;
+margin-bottom: 12px !important;
+padding: 0 4px !important;
+background: transparent !important;
+border: none !important;
+}
+
+.service,
+li.service,
+li[class*="service"] {
+background: transparent !important;
+background-color: transparent !important;
+border: none !important;
+border-color: transparent !important;
+box-shadow: none !important;
+border-radius: 12px !important;
+margin-bottom: 6px !important;
+padding: 0 !important;
+}
+
+.service:last-child,
+li.service:last-child {
+margin-bottom: 0 !important;
+}
+
+.service:hover, li.service:hover {
+background: transparent !important;
+background-color: transparent !important;
+}
+
+.service :is(.dark .dark\:bg-white\/5),
+.services-group :is(.dark .dark\:bg-white\/5),
+li.service :is(.dark .dark\:bg-white\/5) {
+background: rgba(24, 24, 24, 0.6) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 12px !important;
+box-shadow: none !important;
+transition: background 0.2s ease, border-color 0.2s ease !important;
+}
+
+.service :is(.dark .dark\:bg-white\/5):hover,
+li.service :is(.dark .dark\:bg-white\/5):hover {
+background: rgba(34, 34, 34, 0.7) !important;
+border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.service :is(.dark .dark\:bg-white\/10),
+.services-group :is(.dark .dark\:bg-white\/10) {
+background: rgba(28, 28, 28, 0.5) !important;
+border: 1px solid rgba(255, 255, 255, 0.04) !important;
+border-radius: 10px !important;
+box-shadow: none !important;
+}
+
+.service-icon img, .service-icon div {
+width: 32px !important; height: 32px !important; border-radius: 8px !important;
+}
+
+.service-title {
+color: rgba(255, 255, 255, 0.9) !important;
+font-weight: 500 !important; font-size: 0.95rem !important;
+}
+
+.service-description {
+color: rgba(255, 255, 255, 0.45) !important; font-size: 0.8rem !important;
+}
+
+.service-status { font-size: 0.65rem !important; opacity: 0.75; }
+.service-widget { padding-top: 6px !important; }
+.service-widget .widget-label,
+.service-widget span {
+color: rgba(255, 255, 255, 0.4) !important;
+font-size: 0.75rem !important;
+text-transform: uppercase !important; letter-spacing: 0.03em !important;
+}
+
+.service-widget .widget-value,
+.service-widget b,
+.service-widget strong {
+color: rgba(255, 255, 255, 0.8) !important;
+}
+
+input[type="text"], input[type="search"], .search-input, .search-bar input {
+background: rgba(18, 18, 18, 0.8) !important;
+backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 20px !important;
+color: rgba(255, 255, 255, 0.85) !important; padding: 8px 16px !important;
+}
+
+input::placeholder { color: rgba(255, 255, 255, 0.25) !important; }
+.bookmarks-group {
+background: rgba(18, 18, 18, 0.8) !important;
+backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important;
+border: 1px solid rgba(255, 255, 255, 0.06) !important;
+border-radius: 16px !important; padding: 12px 16px !important; margin-bottom: 16px !important;
+}
+
+.bookmark a { color: rgba(255, 255, 255, 0.6) !important; transition: color 0.2s ease !important; }
+.bookmark a:hover { color: rgba(255, 255, 255, 0.9) !important; }
+body, h1, h2, h3, h4, h5, h6, p, span, div, a {
+color: rgba(255, 255, 255, 0.7);
+}
+
+a { text-decoration: none !important; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+@media screen and (max-width: 1024px) {
+.services-group { padding: 12px 12px 6px 12px !important; }
+.information-widgets {
+padding: 8px 12px !important; flex-wrap: wrap !important; justify-content: center !important;
+}
+}
+
+@media screen and (max-width: 768px) {
+/* Comprehensive weather widget hiding - multiple selectors for maximum coverage */
+.information-widget-weather,
+div.information-widget-weather,
+[class*="weather"],
+div[class*="openmeteo"],
+div[class*="weather-widget"] {
+display: none !important;
+visibility: hidden !important;
+opacity: 0 !important;
+height: 0 !important;
+width: 0 !important;
+overflow: hidden !important;
+}
+
+/* Hide datetime widget */
+.information-widget-datetime,
+div.information-widget-datetime,
+[class*="datetime"] {
+display: none !important;
+visibility: hidden !important;
+opacity: 0 !important;
+height: 0 !important;
+width: 0 !important;
+overflow: hidden !important;
+}
+
+/* Target SVG weather icons */
+svg[class*="weather"],
+svg[class*="sun"],
+svg[class*="cloud"] {
+display: none !important;
+}
+
+#layout, .services-container, .columns-container {
+flex-direction: column !important; display: flex !important;
+}
+
+.services-group {
+width: 100% !important; max-width: 100% !important;
+flex: 1 1 100% !important; padding: 12px 12px 6px 12px !important; margin-bottom: 16px !important;
+}
+
+.information-widgets {
+flex-wrap: wrap !important; justify-content: center !important;
+gap: 6px !important; padding: 8px 10px !important;
+}
+
+.information-widget-resource {
+font-size: 0.85rem !important; padding: 4px 8px !important;
+}
+
+.service-icon img, .service-icon div { width: 28px !important; height: 28px !important; }
+.service-widget { flex-wrap: wrap !important; gap: 4px !important; }
+}
+
+@media screen and (max-width: 480px) {
+.services-group { padding: 10px 10px 4px 10px !important; border-radius: 12px !important; margin-bottom: 12px !important; }
+.services-group h2 { font-size: 1rem !important; margin-bottom: 8px !important; }
+.service-icon img, .service-icon div { width: 26px !important; height: 26px !important; }
+.service-title { font-size: 0.9rem !important; }
+.service-description { font-size: 0.75rem !important; }
+.information-widgets {
+border-radius: 12px !important; padding: 8px !important;
+flex-wrap: wrap !important; gap: 4px !important; margin-bottom: 14px !important;
+}
+
+.information-widget-resource { font-size: 0.78rem !important; flex: 0 1 auto !important; }
+
+.service-widget .widget-label, .service-widget span { font-size: 0.7rem !important; }
+.bookmarks-group { padding: 10px !important; border-radius: 12px !important; }
+input[type="text"], input[type="search"] { font-size: 0.9rem !important; padding: 8px 14px !important; }
+}
+
+@media screen and (max-width: 360px) {
+.services-group { padding: 8px 8px 2px 8px !important; }
+.service-icon img, .service-icon div { width: 24px !important; height: 24px !important; }
+.information-widgets { padding: 6px !important; }
+}
