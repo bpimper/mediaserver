@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 810" font-family="'Segoe UI', 'Inter', system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.03"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="810" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="530" y="38" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="600">Network &amp; Communication</text>
+
+  <!-- ── External Traffic ── -->
+  <rect x="370" y="58" width="320" height="42" rx="21" fill="none" stroke="#7d8590" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <text x="530" y="84" text-anchor="middle" fill="#7d8590" font-size="13" font-weight="500">☁ External Traffic  (HTTP / HTTPS)</text>
+
+  <!-- Arrow: External → Edge -->
+  <line x1="530" y1="100" x2="530" y2="132" stroke="#7d8590" stroke-width="1.5"/>
+  <polygon points="530,140 525,130 535,130" fill="#7d8590"/>
+
+  <!-- ═════════════════ EDGE NETWORK ═════════════════ -->
+  <rect x="30" y="144" width="1000" height="120" rx="10" fill="url(#edgeGrad)" stroke="#f97316" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="52" y="168" fill="#f97316" font-size="13" font-weight="600">EDGE NETWORK</text>
+  <text x="197" y="168" fill="#f9731660" font-size="11">169.254.2.0/28</text>
+
+  <!-- Traefik -->
+  <g filter="url(#shadow)">
+    <rect x="160" y="182" width="280" height="66" rx="8" fill="#1c2128" stroke="#f97316" stroke-width="1.2"/>
+    <rect x="160" y="182" width="280" height="22" rx="8" fill="#f97316" fill-opacity="0.15"/>
+    <text x="300" y="198" text-anchor="middle" fill="#f97316" font-size="12" font-weight="600">⚡ Traefik</text>
+    <text x="300" y="221" text-anchor="middle" fill="#c9d1d9" font-size="11">:80  :443  :8080</text>
+    <text x="300" y="240" text-anchor="middle" fill="#7d8590" font-size="10">traefik.domain</text>
+  </g>
+
+  <!-- TinyAuth -->
+  <g filter="url(#shadow)">
+    <rect x="600" y="182" width="280" height="66" rx="8" fill="#1c2128" stroke="#f97316" stroke-width="1.2"/>
+    <rect x="600" y="182" width="280" height="22" rx="8" fill="#f97316" fill-opacity="0.15"/>
+    <text x="740" y="198" text-anchor="middle" fill="#f97316" font-size="12" font-weight="600">🔒 TinyAuth</text>
+    <text x="740" y="221" text-anchor="middle" fill="#c9d1d9" font-size="11">:3000</text>
+    <text x="740" y="240" text-anchor="middle" fill="#7d8590" font-size="10">auth.domain</text>
+  </g>
+
+  <!-- Traefik → TinyAuth -->
+  <line x1="440" y1="215" x2="594" y2="215" stroke="#f97316" stroke-width="1" stroke-dasharray="4 2"/>
+  <polygon points="598,215 590,211 590,219" fill="#f97316"/>
+  <text x="518" y="208" text-anchor="middle" fill="#f9731699" font-size="9">auth</text>
+
+  <!-- Arrow: Edge → Core -->
+  <line x1="530" y1="264" x2="530" y2="298" stroke="#7d8590" stroke-width="1.5"/>
+  <polygon points="530,306 525,296 535,296" fill="#7d8590"/>
+
+  <!-- ═════════════════ CORE NETWORK ═════════════════ -->
+  <rect x="30" y="310" width="1000" height="462" rx="10" fill="url(#coreGrad)" stroke="#3b82f6" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="52" y="336" fill="#58a6ff" font-size="13" font-weight="600">CORE NETWORK</text>
+  <text x="193" y="336" fill="#58a6ff60" font-size="11">169.254.2.16/28</text>
+
+  <!-- ── Row 1: Socket Proxy · Docker Host Socket · Jellyfin ── -->
+
+  <!-- Socket Proxy -->
+  <g filter="url(#shadow)">
+    <rect x="56" y="358" width="240" height="66" rx="8" fill="#1c2128" stroke="#da3633" stroke-width="1.2"/>
+    <rect x="56" y="358" width="240" height="22" rx="8" fill="#da3633" fill-opacity="0.15"/>
+    <text x="176" y="374" text-anchor="middle" fill="#da3633" font-size="12" font-weight="600">🛡 Socket Proxy</text>
+    <text x="176" y="397" text-anchor="middle" fill="#c9d1d9" font-size="11">:2375</text>
+    <text x="176" y="416" text-anchor="middle" fill="#7d8590" font-size="10">internal only</text>
+  </g>
+
+  <!-- Docker Host Socket -->
+  <rect x="390" y="372" width="220" height="38" rx="8" fill="#21262d" stroke="#7d8590" stroke-width="0.8" stroke-dasharray="5 3"/>
+  <text x="500" y="396" text-anchor="middle" fill="#7d8590" font-size="11">🐳 Docker Socket</text>
+
+  <!-- Socket Proxy → Docker Socket -->
+  <line x1="296" y1="391" x2="384" y2="391" stroke="#7d8590" stroke-width="1" stroke-dasharray="3 2"/>
+  <polygon points="388,391 380,387 380,395" fill="#7d8590"/>
+
+  <!-- Jellyfin -->
+  <g filter="url(#shadow)">
+    <rect x="720" y="358" width="240" height="66" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.2"/>
+    <rect x="720" y="358" width="240" height="22" rx="8" fill="#58a6ff" fill-opacity="0.15"/>
+    <text x="840" y="374" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="600">🎬 Jellyfin</text>
+    <text x="840" y="397" text-anchor="middle" fill="#c9d1d9" font-size="11">:8096  :8920  :1900  :7359</text>
+    <text x="840" y="416" text-anchor="middle" fill="#7d8590" font-size="10">jellyfin.domain</text>
+  </g>
+
+  <!-- ── Row 2: Beszel Agent · Homepage · Cinephage ── -->
+
+  <!-- Beszel Agent -->
+  <g filter="url(#shadow)">
+    <rect x="56" y="490" width="240" height="56" rx="8" fill="#1c2128" stroke="#a371f7" stroke-width="0.8" stroke-dasharray="5 3"/>
+    <rect x="56" y="490" width="240" height="22" rx="8" fill="#a371f7" fill-opacity="0.08"/>
+    <text x="176" y="506" text-anchor="middle" fill="#a371f7" font-size="11" font-weight="500">🔍 Beszel Agent</text>
+    <text x="176" y="532" text-anchor="middle" fill="#7d8590" font-size="10">:45560 • internal only</text>
+  </g>
+
+  <!-- Homepage -->
+  <g filter="url(#shadow)">
+    <rect x="390" y="490" width="240" height="66" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.2"/>
+    <rect x="390" y="490" width="240" height="22" rx="8" fill="#3fb950" fill-opacity="0.15"/>
+    <text x="510" y="506" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="600">🏠 Homepage</text>
+    <text x="510" y="529" text-anchor="middle" fill="#c9d1d9" font-size="11">:3000</text>
+    <text x="510" y="548" text-anchor="middle" fill="#7d8590" font-size="10">home.domain</text>
+  </g>
+
+  <!-- Cinephage -->
+  <g filter="url(#shadow)">
+    <rect x="720" y="490" width="240" height="66" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.2"/>
+    <rect x="720" y="490" width="240" height="22" rx="8" fill="#58a6ff" fill-opacity="0.15"/>
+    <text x="840" y="506" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="600">🎞 Cinephage</text>
+    <text x="840" y="529" text-anchor="middle" fill="#c9d1d9" font-size="11">:3000</text>
+    <text x="840" y="548" text-anchor="middle" fill="#7d8590" font-size="10">media.domain</text>
+  </g>
+
+  <!-- ── Row 3: Beszel Hub · qBittorrent ── -->
+
+  <!-- Beszel Hub -->
+  <g filter="url(#shadow)">
+    <rect x="56" y="618" width="240" height="66" rx="8" fill="#1c2128" stroke="#a371f7" stroke-width="1.2"/>
+    <rect x="56" y="618" width="240" height="22" rx="8" fill="#a371f7" fill-opacity="0.15"/>
+    <text x="176" y="634" text-anchor="middle" fill="#a371f7" font-size="12" font-weight="600">📊 Beszel</text>
+    <text x="176" y="657" text-anchor="middle" fill="#c9d1d9" font-size="11">:8090</text>
+    <text x="176" y="676" text-anchor="middle" fill="#7d8590" font-size="10">monitor.domain</text>
+  </g>
+
+  <!-- qBittorrent -->
+  <g filter="url(#shadow)">
+    <rect x="720" y="618" width="240" height="66" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.2"/>
+    <rect x="720" y="618" width="240" height="22" rx="8" fill="#58a6ff" fill-opacity="0.15"/>
+    <text x="840" y="634" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="600">⬇ qBittorrent</text>
+    <text x="840" y="657" text-anchor="middle" fill="#c9d1d9" font-size="11">:8080  :6881</text>
+    <text x="840" y="676" text-anchor="middle" fill="#7d8590" font-size="10">torrent.domain</text>
+  </g>
+
+  <!-- ═════════════════ CORE-INTERNAL COMMUNICATION ═════════════════ -->
+
+  <!-- Beszel Agent → Socket Proxy (straight up) -->
+  <line x1="176" y1="490" x2="176" y2="430" stroke="#a371f7" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+  <polygon points="176,426 172,434 180,434" fill="#a371f7" opacity="0.5"/>
+  <text x="164" y="464" fill="#a371f7" font-size="8" opacity="0.5" text-anchor="end">metrics</text>
+
+  <!-- Beszel Hub → Beszel Agent (straight up) -->
+  <line x1="176" y1="618" x2="176" y2="552" stroke="#a371f7" stroke-width="1" stroke-opacity="0.5"/>
+  <polygon points="176,548 172,556 180,556" fill="#a371f7" opacity="0.6"/>
+
+  <!-- Homepage → Beszel Hub (widget, left then down) -->
+  <polyline points="390,540 350,540 350,651 296,651" fill="none" stroke="#3fb950" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+  <polygon points="298,651 306,647 306,655" fill="#3fb950" opacity="0.45"/>
+  <text x="338" y="600" fill="#3fb950" font-size="8" opacity="0.5" text-anchor="end">widget</text>
+
+  <!-- Homepage → Jellyfin (widget, right then up) -->
+  <polyline points="630,510 672,510 672,400 720,400" fill="none" stroke="#3fb950" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+  <polygon points="720,400 712,396 712,404" fill="#3fb950" opacity="0.45"/>
+  <text x="684" y="458" fill="#3fb950" font-size="8" opacity="0.5">widget</text>
+
+  <!-- Homepage → qBittorrent (widget, right then down) -->
+  <polyline points="630,540 660,540 660,651 720,651" fill="none" stroke="#3fb950" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+  <polygon points="720,651 712,647 712,655" fill="#3fb950" opacity="0.45"/>
+  <text x="672" y="600" fill="#3fb950" font-size="8" opacity="0.5">widget</text>
+
+  <!-- Socket Proxy → Homepage (labels, right then down) -->
+  <polyline points="296,415 340,415 340,520 390,520" fill="none" stroke="#3fb950" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+  <polygon points="390,520 382,516 382,524" fill="#3fb950" opacity="0.45"/>
+  <text x="352" y="472" fill="#3fb950" font-size="8" opacity="0.5">labels</text>
+
+  <!-- Cinephage → Jellyfin (update library, straight up) -->
+  <line x1="840" y1="490" x2="840" y2="430" stroke="#58a6ff" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+  <polygon points="840,426 836,434 844,434" fill="#58a6ff" opacity="0.5"/>
+  <text x="852" y="464" fill="#58a6ff" font-size="8" opacity="0.5">library update</text>
+
+  <!-- Cinephage → qBittorrent (trigger download, straight down) -->
+  <line x1="840" y1="556" x2="840" y2="612" stroke="#58a6ff" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+  <polygon points="840,616 836,608 844,608" fill="#58a6ff" opacity="0.5"/>
+  <text x="852" y="588" fill="#58a6ff" font-size="8" opacity="0.5">download</text>
+
+  <!-- ═════════════════ LEGEND ═════════════════ -->
+  <g transform="translate(215,762)">
+    <rect x="0" y="0" width="630" height="30" rx="6" fill="#21262d" stroke="#30363d" stroke-width="0.5"/>
+    <circle cx="20" cy="15" r="5" fill="#f97316" opacity="0.7"/>
+    <text x="32" y="19" fill="#7d8590" font-size="10">Edge</text>
+    <circle cx="80" cy="15" r="5" fill="#da3633" opacity="0.7"/>
+    <text x="92" y="19" fill="#7d8590" font-size="10">Security</text>
+    <circle cx="162" cy="15" r="5" fill="#a371f7" opacity="0.7"/>
+    <text x="174" y="19" fill="#7d8590" font-size="10">Monitoring</text>
+    <circle cx="268" cy="15" r="5" fill="#3fb950" opacity="0.7"/>
+    <text x="280" y="19" fill="#7d8590" font-size="10">Dashboard</text>
+    <circle cx="370" cy="15" r="5" fill="#58a6ff" opacity="0.7"/>
+    <text x="382" y="19" fill="#7d8590" font-size="10">Media</text>
+    <line x1="432" y1="10" x2="468" y2="10" stroke="#7d8590" stroke-width="1" stroke-dasharray="4 2"/>
+    <text x="476" y="14" fill="#7d8590" font-size="10">Internal communication</text>
+  </g>
+</svg>

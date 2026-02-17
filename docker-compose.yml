@@ -1,0 +1,407 @@
+networks:
+  edge:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${EDGE_SUBNET}
+  core:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${CORE_SUBNET}
+
+volumes:
+  socket-proxy.run:
+
+x-lockdown: &lockdown
+  # prevents write access to the image itself
+  read_only: true
+  # prevents any process within the container to gain more privileges
+  security_opt:
+    - "no-new-privileges=true"
+
+services:
+  socket-proxy:
+    image: ghcr.io/11notes/socket-proxy:${SOCKETPROXY_VERSION}
+    <<: *lockdown
+    container_name: socket-proxy
+    restart: unless-stopped
+    user: "0:103"
+    networks:
+      - core
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - "/run/docker.sock:/run/docker.sock:ro"
+      - "socket-proxy.run:/run/proxy"
+
+  traefik:
+    image: ghcr.io/11notes/traefik:${TRAEFIK_VERSION}
+    <<: *lockdown
+    container_name: traefik
+    restart: unless-stopped
+    depends_on:
+      socket-proxy:
+        condition: service_healthy
+        restart: true
+    networks:
+      - edge
+      - core
+    command:
+      - "--ping=true"
+      - "--ping.terminatingStatusCode=204"
+      - "--global.checkNewVersion=false"
+      - "--global.sendAnonymousUsage=false"
+      - "--accesslog=true"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--log.level=INFO"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+      - "--entrypoints.https.http.tls=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.file.filename=/certs/certs.yml"
+      - "--providers.file.watch=true"
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 80
+    ports:
+      - "${TRAEFIK_HTTP_PORT}:80"
+      - "${TRAEFIK_HTTPS_PORT}:443"
+    volumes:
+      - "socket-proxy.run:/var/run"
+      - ${CERTS_DIR}:/certs:ro
+    environment:
+      - TZ=${TZ}
+    user: "0:0"
+    labels:
+      traefik.enable: "true"
+      traefik.http.middlewares.default-http.redirectscheme.permanent: "true"
+      traefik.http.middlewares.default-http.redirectscheme.scheme: "https"
+      traefik.http.routers.default-http.priority: "1"
+      traefik.http.routers.default-http.rule: "HostRegexp(`.+`)"
+      traefik.http.routers.default-http.entrypoints: "http"
+      traefik.http.routers.default-http.middlewares: "default-http"
+      traefik.http.routers.default-http.service: "default-http"
+      traefik.http.services.default-http.loadbalancer.passhostheader: "true"
+      traefik.http.routers.traefik.rule: "Host(`traefik.${DOMAIN}`)"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.entrypoints: "https"
+      traefik.http.routers.traefik.tls: "true"
+      traefik.http.routers.traefik.middlewares: "tinyauth"
+      homepage.group: "Core"
+      homepage.weight: "200"
+      homepage.name: "Traefik"
+      homepage.icon: "traefik.png"
+      homepage.href: "https://traefik.${DOMAIN}"
+      homepage.description: "Reverse Proxy"
+      homepage.widget.type: "traefik"
+      homepage.widget.url: "http://traefik:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: "${TRAEFIK_CPU_LIMIT}"
+          memory: ${TRAEFIK_MEM_LIMIT}
+
+  tinyauth:
+    image: ghcr.io/11notes/tinyauth:${TINYAUTH_VERSION}
+    <<: *lockdown
+    container_name: tinyauth
+    restart: unless-stopped
+    networks:
+      - edge
+      - core
+    ports:
+      - "${TINYAUTH_PORT}:3000"
+    volumes:
+      - "socket-proxy.run:/var/run"
+    environment:
+      - TZ=${TZ}
+      - APP_URL=https://auth.${DOMAIN}
+      - SESSION_DURATION=86400
+      - USERS=${TINYAUTH_USERS}
+      - DOCKER_HOST=tcp://socket-proxy:2375
+      - APP_TITLE=Login
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.tinyauth.rule: "Host(`auth.${DOMAIN}`)"
+      traefik.http.routers.tinyauth.entrypoints: "https"
+      traefik.http.routers.tinyauth.tls: "true"
+      traefik.http.services.tinyauth.loadbalancer.server.port: "3000"
+      traefik.http.middlewares.tinyauth.forwardauth.address: "http://tinyauth:3000/api/auth/traefik"
+      traefik.http.middlewares.tinyauth.forwardauth.authResponseHeaders: "remote-user,remote-email,remote-name"
+      homepage.group: "Core"
+      homepage.weight: "100"
+      homepage.name: "TinyAuth"
+      homepage.icon: "tinyauth.png"
+      homepage.href: "https://auth.${DOMAIN}"
+      homepage.description: "Auth"
+    deploy:
+      resources:
+        limits:
+          cpus: "${TINYAUTH_CPU_LIMIT}"
+          memory: ${TINYAUTH_MEM_LIMIT}
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:${HOMEPAGE_VERSION}
+    container_name: homepage
+    restart: unless-stopped
+    networks:
+      - core
+    ports:
+      - "${HOMEPAGE_PORT}:3000"
+    volumes:
+      - "socket-proxy.run:/run/proxy"
+      - ${CONFIG_DIR}/homepage:/app/config
+      - ${APPDATA_DIR}/homepage/icons:/app/public/icons
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - HOMEPAGE_ALLOWED_HOSTS=home.${DOMAIN},${DOMAIN}
+      - HOMEPAGE_VAR_WEATHER_LABEL=${HOMEPAGE_VAR_WEATHER_LABEL}
+      - HOMEPAGE_VAR_WEATHER_LATITUDE=${HOMEPAGE_VAR_WEATHER_LATITUDE}
+      - HOMEPAGE_VAR_WEATHER_LONGITUDE=${HOMEPAGE_VAR_WEATHER_LONGITUDE}
+      - HOMEPAGE_VAR_LOCALE=${HOMEPAGE_VAR_LOCALE}
+      - HOMEPAGE_VAR_UNITS=${HOMEPAGE_VAR_UNITS}
+    security_opt:
+      - "no-new-privileges=true"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.homepage.rule: "Host(`home.${DOMAIN}`) || Host(`${DOMAIN}`)"
+      traefik.http.routers.homepage.entrypoints: "https"
+      traefik.http.routers.homepage.tls: "true"
+      traefik.http.routers.homepage.middlewares: "tinyauth"
+      traefik.http.services.homepage.loadbalancer.server.port: "3000"
+      tinyauth.apps.homepage.ip.bypass: "10.255.255.0/24"
+    deploy:
+      resources:
+        limits:
+          cpus: "${HOMEPAGE_CPU_LIMIT}"
+          memory: ${HOMEPAGE_MEM_LIMIT}
+
+  beszel:
+    image: ghcr.io/11notes/beszel:${BESZEL_VERSION}
+    <<: *lockdown
+    container_name: beszel
+    restart: unless-stopped
+    networks:
+      - core
+    ports:
+      - "${BESZEL_PORT}:8090"
+    volumes:
+      - ${APPDATA_DIR}/beszel:/beszel/var
+    environment:
+      - TZ=${TZ}
+    working_dir: /beszel/var
+    tmpfs:
+      - "/tmp:uid=1000,gid=1000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.beszel.rule: "Host(`monitor.${DOMAIN}`)"
+      traefik.http.routers.beszel.entrypoints: "https"
+      traefik.http.routers.beszel.tls: "true"
+      traefik.http.routers.beszel.middlewares: "tinyauth"
+      traefik.http.services.beszel.loadbalancer.server.port: "8090"
+      homepage.group: "Core"
+      homepage.weight: "300"
+      homepage.name: "Beszel"
+      homepage.icon: "beszel.png"
+      homepage.href: "https://monitor.${DOMAIN}"
+      homepage.description: "Monitoring"
+      homepage.widget.type: "beszel"
+      homepage.widget.url: "http://beszel:8090"
+      homepage.widget.username: "${BESZEL_USERNAME}"
+      homepage.widget.password: "${BESZEL_PASSWORD}"
+      homepage.widget.systemId: "${BESZEL_SYSTEM_ID}"
+      homepage.widget.fields: '["cpu", "memory", "disk", "network"]'
+      homepage.widget.version: "2"
+    deploy:
+      resources:
+        limits:
+          cpus: "${BESZEL_CPU_LIMIT}"
+          memory: ${BESZEL_MEM_LIMIT}
+
+  beszel-agent:
+    image: ghcr.io/11notes/beszel-agent:${BESZEL_AGENT_VERSION}
+    <<: *lockdown
+    container_name: beszel-agent
+    restart: unless-stopped
+    networks:
+      - core
+    volumes:
+      - "socket-proxy.run:/run/proxy"
+    environment:
+      - TZ=${TZ}
+      - PORT=45560
+      - HUB_URL=http://beszel:8090
+      - TOKEN=${BESZEL_AGENT_TOKEN}
+      - KEY=${BESZEL_AGENT_KEY}
+      - DOCKER_HOST=tcp://socket-proxy:2375
+    tmpfs:
+      - "/tmp:uid=1000,gid=1000"
+    labels:
+      traefik.enable: "false"
+    deploy:
+      resources:
+        limits:
+          cpus: "${BESZEL_AGENT_CPU_LIMIT}"
+          memory: ${BESZEL_AGENT_MEM_LIMIT}
+
+  qbittorrent:
+    image: ghcr.io/11notes/qbittorrent:${QBITTORRENT_VERSION}
+    <<: *lockdown
+    container_name: qbittorrent
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+    networks:
+      - core
+    tmpfs:
+      - /tmp
+    ports:
+      - "${QBITTORRENT_WEBUI_PORT}:8080"
+      - "${QBITTORRENT_INFO_PORT}:6881/tcp"
+      - "${QBITTORRENT_INFO_PORT}:6881/udp"
+    volumes:
+      - ${APPDATA_DIR}/qbittorrent:/qbittorrent/var
+      - ${CONFIG_DIR}/qbittorrent:/qbittorrent/etc
+      - ${DOWNLOADS_DIR}:/opt/qBittorrent/downloads
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    labels:
+      traefik.enable: "true"
+      traefik.http.middlewares.qb-headers.headers.customrequestheaders.X-Frame-Options: "SAMEORIGIN"
+      traefik.http.middlewares.qb-headers.headers.customrequestheaders.Referer: ""
+      traefik.http.middlewares.qb-headers.headers.customrequestheaders.Origin: ""
+      traefik.http.routers.qbittorrent.rule: "Host(`torrent.${DOMAIN}`)"
+      traefik.http.routers.qbittorrent.entrypoints: "https"
+      traefik.http.routers.qbittorrent.tls: "true"
+      traefik.http.routers.qbittorrent.middlewares: "tinyauth,qb-headers"
+      traefik.http.services.qbittorrent.loadbalancer.server.port: "8080"
+      traefik.http.services.qbittorrent.loadbalancer.passhostheader: "false"
+      homepage.group: "Media"
+      homepage.weight: "300"
+      homepage.name: "qBittorrent"
+      homepage.icon: "qbittorrent.png"
+      homepage.href: "https://torrent.${DOMAIN}"
+      homepage.description: "Torrent Client"
+      homepage.widget.type: "qbittorrent"
+      homepage.widget.url: "http://qbittorrent:8080"
+      homepage.widget.username: "${QBITTORRENT_USERNAME}"
+      homepage.widget.password: "${QBITTORRENT_PASSWORD}"
+    deploy:
+      resources:
+        limits:
+          cpus: "${QBITTORRENT_CPU_LIMIT}"
+          memory: ${QBITTORRENT_MEM_LIMIT}
+
+
+  jellyfin:
+    image: jellyfin/jellyfin:${JELLYFIN_VERSION}
+    container_name: jellyfin
+    restart: unless-stopped
+    networks:
+      - core
+    ports:
+      - "${JELLYFIN_HTTP_PORT}:8096"
+      - "${JELLYFIN_HTTPS_PORT}:8920"
+      - "${JELLYFIN_DLNA_PORT}:1900/udp"
+      - "${JELLYFIN_DISCOVERY_PORT}:7359/udp"
+    volumes:
+      - ${APPDATA_DIR}/jellyfin/config:/config
+      - ${MOVIES_DIR}:/media/movies
+      - ${TV_DIR}:/media/tv
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/mpp_service:/dev/mpp_service
+      - /dev/rga:/dev/rga
+      - /dev/dma_heap:/dev/dma_heap
+    group_add:
+      - "44"
+      - "107"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
+    security_opt:
+      - "no-new-privileges=true"
+    labels:
+      traefik.enable: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.customResponseHeaders.X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex"
+      traefik.http.middlewares.jellyfin-mw.headers.SSLRedirect: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.SSLHost: "jellyfin.${DOMAIN}"
+      traefik.http.middlewares.jellyfin-mw.headers.SSLForceHost: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.STSSeconds: "315360000"
+      traefik.http.middlewares.jellyfin-mw.headers.STSIncludeSubdomains: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.STSPreload: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.forceSTSHeader: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.frameDeny: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.jellyfin-mw.headers.customResponseHeaders.X-XSS-Protection: "1; mode=block"
+      traefik.http.routers.jellyfin.rule: "Host(`jellyfin.${DOMAIN}`)"
+      traefik.http.routers.jellyfin.entrypoints: "https"
+      traefik.http.routers.jellyfin.tls: "true"
+      traefik.http.routers.jellyfin.middlewares: "jellyfin-mw"
+      traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
+      traefik.http.services.jellyfin.loadbalancer.passHostHeader: "true"
+      homepage.group: "Media"
+      homepage.weight: "200"
+      homepage.name: "Jellyfin"
+      homepage.icon: "jellyfin.png"
+      homepage.href: "https://jellyfin.${DOMAIN}"
+      homepage.description: "Media Player"
+      homepage.widget.type: "jellyfin"
+      homepage.widget.url: "http://jellyfin:8096"
+      homepage.widget.key: "${JELLYFIN_API_KEY}"
+      homepage.widget.version: 1
+      homepage.widget.enableBlocks: true
+      homepage.widget.enableNowPlaying: false
+    deploy:
+      resources:
+        limits:
+          cpus: "${JELLYFIN_CPU_LIMIT}"
+          memory: ${JELLYFIN_MEM_LIMIT}
+
+  cinephage:
+    image: ghcr.io/moldytaint/cinephage:${CINEPHAGE_VERSION}
+    container_name: cinephage
+    restart: unless-stopped
+    networks:
+      - core
+    ports:
+      - "${CINEPHAGE_PORT}:3000"
+    volumes:
+      - ${CONFIG_DIR}/cinephage:/config
+      - ${MOVIES_DIR}:/movies
+      - ${TV_DIR}:/tv
+      - ${DOWNLOADS_DIR}:/downloads
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - ORIGIN=http://10.255.255.10:${CINEPHAGE_PORT}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - FFPROBE_PATH=/usr/bin/ffprobe
+    security_opt:
+      - "no-new-privileges=true"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.cinephage.rule: "Host(`media.${DOMAIN}`)"
+      traefik.http.routers.cinephage.entrypoints: "https"
+      traefik.http.routers.cinephage.tls: "true"
+      traefik.http.routers.cinephage.middlewares: "tinyauth"
+      traefik.http.services.cinephage.loadbalancer.server.port: "3000"
+      homepage.group: "Media"
+      homepage.weight: "100"
+      homepage.name: "Cinephage"
+      homepage.icon: "/icons/cine.png"
+      homepage.href: "https://media.${DOMAIN}"
+      homepage.description: "AIO Media Manager"
+    deploy:
+      resources:
+        limits:
+          cpus: "${CINEPHAGE_CPU_LIMIT}"
+          memory: ${CINEPHAGE_MEM_LIMIT}
