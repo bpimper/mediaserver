@@ -69,7 +69,7 @@ chmod +x setup.sh
 sudo bash setup.sh
 ```
 
-### What it does, step by step
+### Steps explained
 
 **Step 1 — Generate `.env`** prompts you for the values that are unique to your environment. Everything else (image versions, port mappings, resource limits) is pre-filled with sensible defaults. The values you'll be asked for:
 
