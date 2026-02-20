@@ -54,6 +54,8 @@ Before running the setup script, make sure the following are ready.
 
 **TMDB account** — Cinephage uses TMDB for media metadata. Create a free account at [themoviedb.org](https://www.themoviedb.org/), then go to Settings → API → Generate an API key. 
 
+**smartmontools** - For S.M.A.R.T. information monitoring Your host system needs to have smartmontools installed, [details](https://beszel.dev/guide/smart-data).
+
 ### Optional
 
 **Tailscale account** — If you want to access your homelab remotely over VPN, create an account at [tailscale.com](https://tailscale.com/). The setup script can optionally install Tailscale as a subnet router, allowing your remote devices to reach all services as if they were on the local network. This is entirely optional and can be done later.
