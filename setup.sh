@@ -331,7 +331,7 @@ JELLYFIN_MEM_LIMIT=4096M
 # ============================================================================
 # CINEPHAGE
 # ============================================================================
-CINEPHAGE_VERSION=arm64
+CINEPHAGE_VERSION=latest
 CINEPHAGE_PORT=3005
 CINEPHAGE_CPU_LIMIT=2.0
 CINEPHAGE_MEM_LIMIT=1024M
